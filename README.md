@@ -10,8 +10,10 @@ Bienvenido al repositorio oficial del blog más absurdo, alejado de cualquier es
 Este proyecto es una página web diseñada para centralizar toda nuestra sabiduría:
 * Chistes internos que nadie más entiende.
 * Enlaces a vídeos de YouTube.
-* Espacio para subir anécdotas random.
-* Cualquier cosa que nos guste.
+* Espacio para subir anécdotas random, estilo blog retro.
+* Ranking semanal de los integrantes de la pandilla.
+* Encuestas semanales.
+* Biografía de los compas.
 
 ---
 
