@@ -9,99 +9,60 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     
     <style>
-        /* Fondo oscuro de foro antiguo */
-        body {
-            background-color: #000000;
-            background-image: url('https://www.transparenttextures.com/patterns/stardust.png');
-            color: #00ff00;
-            font-family: 'Courier New', Courier, monospace;
+        body { 
+            background-color: #fcfcfc; 
+            color: #333333;
         }
-        /* Caja principal con estilo retro */
-        .retro-box {
-            background-color: #111111;
-            border: 4px ridge #ff00ff;
-            box-shadow: 10px 10px 0px #00ffff;
-            padding: 40px;
-            margin-top: 30px;
+        .marquee-minimalista {
+            background-color: #ffffff;
+            color: #000000;
+            padding: 10px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 1rem;
         }
-        /* Títulos */
-        h1 {
-            font-family: 'Impact', sans-serif;
-            color: #ffff00;
-            text-shadow: 3px 3px #ff0000;
-            letter-spacing: 2px;
+        .contenedor-principal {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
         }
-        .marquee-toxico {
-            background-color: #ff00ff;
-            color: white;
-            font-size: 1.5rem;
-            border-top: 3px dashed white;
-            border-bottom: 3px dashed white;
-            font-family: 'Comic Sans MS', cursive;
-        }
-        /* Inputs del formulario */
-        .retro-input {
-            background-color: #000;
-            color: #00ff00;
-            border: 2px solid #00ffff;
-            border-radius: 0;
-        }
-        .retro-input:focus {
-            background-color: #222;
-            color: #ff00ff;
-            box-shadow: none;
-            border-color: #ff00ff;
-        }
-        /* Botón */
-        .retro-btn {
-            background-color: #ffff00;
-            color: #000;
-            border: 3px solid #ff0000;
-            font-weight: bold;
-            border-radius: 0;
-            text-transform: uppercase;
-        }
-        .retro-btn:hover {
-            background-color: #ff0000;
-            color: #ffff00;
-            border-color: #ffff00;
+        .tarjeta-limpia {
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 30px;
         }
     </style>
 </head>
 <body>
 
-    <marquee class="marquee-toxico" scrollamount="12">🔥 Bienvenidos a Días Felices: A samuel le gusta la lengua doble de rocha 🔥</marquee>
-    
-    <div class="container pb-5">
-        <div class="retro-box text-center">
-            
-            <!-- Textos solicitados -->
-            <h1>☀️ DÍAS FELICES ☀️</h1>
-            <p class="fs-4 mt-3 text-white">Nani sigue sin superar a chole.</p>
-            <p class="fw-bold fs-3" style="color: #00ffff;">THE GAME.</p>
-            
-            <hr style="border-color: #ff00ff; opacity: 1;">
-            
-            <!-- Formulario del Blog -->
-            <h3 class="mt-4" style="color: #ff00ff;">Blog retro</h3>
-            
-            <div class="row justify-content-center mt-4">
-                <div class="col-md-8 text-start">
-                    <div class="mb-3">
-                        <label for="nombreUsuario" class="form-label fw-bold">Nombre:</label>
-                        <input type="text" id="nombreUsuario" class="form-control retro-input" placeholder="Escribe tu nombre">
-                    </div>
-                    <div class="mb-3">
-                        <label for="mensajeUsuario" class="form-label fw-bold">Mensaje:</label>
-                        <textarea id="mensajeUsuario" class="form-control retro-input" rows="3" placeholder="Escribe tu mensaje..."></textarea>
-                    </div>
-                    <div class="text-center">
-                        <button id="btnEnviar" class="btn retro-btn px-5 py-2">Enviar mensaje</button>
-                    </div>
-                </div>
-            </div>
+    <marquee class="marquee-minimalista" scrollamount="10">🔥 Bienvenidos a Días Felices: A samuel le gusta la lengua doble de rocha 🔥</marquee>
 
+    <div class="contenedor-principal text-center mt-3">
+        
+        <!-- Textos solicitados -->
+        <h1 class="fw-bold mb-3">☀️ DÍAS FELICES ☀️</h1>
+        <p class="fs-5 text-secondary">Nani sigue sin superar a chole.</p>
+        <p class="fw-bold mt-2">THE GAME.</p>
+        
+        <hr class="my-5" style="border-color: #e0e0e0;">
+        
+        <!-- Formulario del Blog -->
+        <div class="tarjeta-limpia text-start mx-auto" style="max-width: 500px;">
+            <h4 class="mb-4 text-center fw-bold">Blog retro</h4>
+            
+            <div class="mb-3">
+                <label for="nombreUsuario" class="form-label">Nombre</label>
+                <input type="text" id="nombreUsuario" class="form-control" placeholder="Escribe tu nombre">
+            </div>
+            <div class="mb-3">
+                <label for="mensajeUsuario" class="form-label">Mensaje</label>
+                <textarea id="mensajeUsuario" class="form-control" rows="4" placeholder="Escribe tu mensaje..."></textarea>
+            </div>
+            <div class="text-center mt-4">
+                <button id="btnEnviar" class="btn btn-dark px-4 py-2">Enviar mensaje</button>
+            </div>
         </div>
+
     </div>
 
 </body>
