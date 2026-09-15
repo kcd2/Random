@@ -40,3 +40,12 @@ Si algún día te aburres y quieres probar el código en tu ordenador:
 1. Clona el repositorio(no es el url real, es un ejemplo):
    ```bash
    git clone [https://github.com/TU_USUARIO/NOMBRE_DEL_REPO.git](https://github.com/TU_USUARIO/NOMBRE_DEL_REPO.git)
+
+
+---
+
+## 📊 Base de Datos: El Motor de "Días Felices"
+
+Diseñamos una base de datos relacional para guardar las biografías, los videos y el guestbook. 
+
+📁 [Haz clic aquí para ver el diagrama de la base de datos (PDF)](dias_felices.pdf)
