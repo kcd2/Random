@@ -46,6 +46,6 @@ Si algún día te aburres y quieres probar el código en tu ordenador:
 
 ## 📊 Base de Datos: El Motor de "Días Felices"
 
-Diseñamos una base de datos relacional para guardar las biografías, los videos y el guestbook. 
+base de datos relacional para guardar las biografías, los videos y el guestbook. 
 
 📁 [Haz clic aquí para ver el diagrama de la base de datos (PDF)](dias_felices.pdf)
