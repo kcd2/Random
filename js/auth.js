@@ -40,6 +40,12 @@ if (registroForm) {
             return;
         }
 
+        // Validar que contenga al menos una mayúscula
+        if (!/[A-Z]/.test(password)) {
+            alert('La contraseña debe contener al menos una letra mayúscula.');
+            return;
+        }
+
         console.log("Conectando con los servidores de Supabase...");
         
         try {
