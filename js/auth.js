@@ -12,7 +12,7 @@ if (typeof window.supabase === 'undefined') {
     console.log("🟢 2. Librería de Supabase detectada correctamente.");
 }
 
-const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 
 // --- LÓGICA DE REGISTRO ---
 const registroForm = document.getElementById('registroForm');
@@ -43,7 +43,7 @@ if (registroForm) {
         console.log("🟢 6. Conectando con los servidores de Supabase...");
         
         try {
-            const { data, error } = await supabase.auth.signUp({
+            const { data, error } = await supabaseClient.auth.signUp({
                 email: email,
                 password: password,
                 options: {
@@ -95,7 +95,7 @@ if (loginForm) {
         console.log("🟢 5. Validando credenciales en Supabase para: " + email);
 
         try {
-            const { data, error } = await supabase.auth.signInWithPassword({
+            const { data, error } = await supabaseClient.auth.signInWithPassword({
                 email: email,
                 password: password
             });
