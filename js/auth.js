@@ -57,9 +57,6 @@ if (registroForm) {
                 alert('Error al registrar: ' + error.message);
                 console.error("Error de Supabase:", error);
             } else if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
-                // Supabase devuelve "éxito" sin error cuando el email YA existe,
-                // para no revelar qué correos están registrados (anti-enumeración).
-                // Esto es lo que suele hacer parecer que "no se guardan" los usuarios.
                 console.warn("El email ya está registrado (identities vacío). No se creó un usuario nuevo.");
                 alert('Ese correo ya está registrado. Si es tuyo, intenta iniciar sesión o revisa tu bandeja de confirmación.');
             } else {
@@ -113,3 +110,51 @@ if (loginForm) {
         }
     });
 }
+
+// --- LÓGICA DE MENÚ DINÁMICO Y SESIÓN ---
+async function actualizarMenu() {
+    const linkLogin = document.getElementById('link-login');
+    if (!linkLogin) {
+        setTimeout(actualizarMenu, 50); 
+        return;
+    }
+
+    const linkRegistro = document.getElementById('link-registro');
+    const linkPerfil = document.getElementById('link-perfil');
+    const linkAdmin = document.getElementById('link-admin');
+    const linkLogout = document.getElementById('link-logout');
+
+    const { data: { session } } = await supabaseClient.auth.getSession();
+
+    if (session) {
+        console.log("Sesión activa detectada para:", session.user.email);
+        
+        linkLogin.style.display = 'none';
+        linkRegistro.style.display = 'none';
+        linkPerfil.style.display = 'inline-block';
+        linkLogout.style.display = 'inline-block';
+
+        const { data: perfil, error } = await supabaseClient
+            .from('amigos')
+            .select('rol')
+            .eq('auth_id', session.user.id)
+            .single();
+
+        if (perfil && (perfil.rol === 'propietario' || perfil.rol === 'administrador')) {
+            linkAdmin.style.display = 'inline-block';
+            console.log("Acceso concedido al Panel Admin.");
+        }
+
+        linkLogout.addEventListener('click', async (e) => {
+            e.preventDefault();
+            await supabaseClient.auth.signOut();
+            alert('Has cerrado sesión correctamente.');
+            window.location.href = 'login.html';
+        });
+
+    } else {
+        console.log("No hay sesión activa. Mostrando menú público.");
+    }
+}
+
+actualizarMenu();
