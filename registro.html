@@ -157,24 +157,25 @@
         /* --- MEDIDOR DE CONTRASEÑA --- */
         .password-reqs {
             font-size: 0.75rem;
-            color: var(--text-muted);
-            margin-top: -15px;
-            margin-bottom: 8px;
+            color: #666666;
+            margin-top: 5px;
+            margin-bottom: 12px;
             text-align: left;
             letter-spacing: 0.5px;
+            display: block;
         }
         .strength-bar-container {
             width: 100%;
             height: 3px;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 2px;
-            margin-bottom: 25px;
+            margin-bottom: 35px;
             overflow: hidden;
         }
         .strength-bar {
             height: 100%;
             width: 0%;
-            background: #ffffff; 
+            background: #ffffff;
             transition: width 0.3s ease, background-color 0.3s ease;
         }
     </style>
@@ -197,8 +198,8 @@
                 <input type="text" id="regNombre" class="form-control-custom" placeholder="Nombre completo *" required>
                 <input type="email" id="regEmail" class="form-control-custom" placeholder="Correo electrónico *" required>
                 
-                <input type="password" id="regPassword" class="form-control-custom" placeholder="Contraseña *" required style="margin-bottom: 10px;">
-                <div class="password-reqs">Mínimo 6 caracteres y 1 mayúscula</div>
+                <input type="password" id="regPassword" class="form-control-custom" placeholder="Contraseña *" required style="margin-bottom: 0;">
+                <span class="password-reqs">Mínimo 6 caracteres y 1 mayúscula</span>
                 <div class="strength-bar-container">
                     <div class="strength-bar" id="strengthBar"></div>
                 </div>
