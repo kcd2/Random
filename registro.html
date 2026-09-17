@@ -154,6 +154,29 @@
                 font-size: 3.5rem; 
             }
         }
+        /* --- MEDIDOR DE CONTRASEÑA --- */
+        .password-reqs {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: -15px;
+            margin-bottom: 8px;
+            text-align: left;
+            letter-spacing: 0.5px;
+        }
+        .strength-bar-container {
+            width: 100%;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+        .strength-bar {
+            height: 100%;
+            width: 0%;
+            background: #ffffff; 
+            transition: width 0.3s ease, background-color 0.3s ease;
+        }
     </style>
 </head>
 <body>
@@ -173,7 +196,13 @@
             <form id="registroForm">
                 <input type="text" id="regNombre" class="form-control-custom" placeholder="Nombre completo *" required>
                 <input type="email" id="regEmail" class="form-control-custom" placeholder="Correo electrónico *" required>
-                <input type="password" id="regPassword" class="form-control-custom" placeholder="Contraseña (mín. 6 caracteres) *" required>
+                
+                <input type="password" id="regPassword" class="form-control-custom" placeholder="Contraseña *" required style="margin-bottom: 10px;">
+                <div class="password-reqs">Mínimo 6 caracteres y 1 mayúscula</div>
+                <div class="strength-bar-container">
+                    <div class="strength-bar" id="strengthBar"></div>
+                </div>
+
                 <button type="submit" class="btn-auth">CREAR CUENTA</button>
             </form>
         </div>
@@ -202,5 +231,31 @@
     
     <!-- Cargar tu archivo lógico de conexión -->
     <script src="js/auth.js"></script>
+
+    <!-- Lógica visual del medidor de contraseña -->
+    <script>
+        const regPassword = document.getElementById('regPassword');
+        const strengthBar = document.getElementById('strengthBar');
+
+        regPassword.addEventListener('input', () => {
+            const val = regPassword.value;
+            let strength = 0;
+
+            if (val.length >= 6) strength += 30; // Longitud
+            if (/[A-Z]/.test(val)) strength += 30; // Mayúscula
+            if (/[0-9!@#$%^&*]/.test(val)) strength += 40; // Números o símbolos extra
+
+            strengthBar.style.width = strength + '%';
+
+            // Transición de blanco al azul de tu orbe oscuro
+            if (strength <= 30) {
+                strengthBar.style.background = '#ffffff'; 
+            } else if (strength <= 60) {
+                strengthBar.style.background = '#8ebdf0'; 
+            } else {
+                strengthBar.style.background = '#3c82c8'; // Azul seguro
+            }
+        });
+    </script>
 </body>
 </html>
