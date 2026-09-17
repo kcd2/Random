@@ -56,8 +56,15 @@ if (registroForm) {
             if (error) {
                 alert('❌ Error al registrar: ' + error.message);
                 console.error("Error de Supabase:", error);
+            } else if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+                // Supabase devuelve "éxito" sin error cuando el email YA existe,
+                // para no revelar qué correos están registrados (anti-enumeración).
+                // Esto es lo que suele hacer parecer que "no se guardan" los usuarios.
+                console.warn("⚠️ 7b. El email ya está registrado (identities vacío). No se creó un usuario nuevo.");
+                alert('⚠️ Ese correo ya está registrado. Si es tuyo, intenta iniciar sesión o revisa tu bandeja de confirmación.');
             } else {
-                alert('✅ ¡Registro exitoso! Tu información se ha guardado correctamente.\n\nSerás redirigido para iniciar sesión.');
+                console.log("🟢 8. Usuario nuevo creado correctamente:", data.user);
+                alert('✅ ¡Registro exitoso! Revisa tu correo para confirmar la cuenta antes de iniciar sesión.\n\nSerás redirigido para iniciar sesión.');
                 registroForm.reset();
                 window.location.href = 'login.html'; 
             }
