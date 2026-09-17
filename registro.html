@@ -236,7 +236,7 @@
 
             // Divide el 100% exacto en los dos requisitos
             if (val.length >= 6) strength += 50;
-            if (/[A-Z]/.test(val)) strength += 50;
+            if (/[A-ZÑÁÉÍÓÚÜ]/.test(val)) strength += 50;
 
             strengthBar.style.width = strength + '%';
 
