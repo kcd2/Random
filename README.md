@@ -20,7 +20,7 @@ Este proyecto es una página web diseñada para centralizar toda nuestra sabidur
 ## 🛠️ Tecnologías que usaremos
 Por aquí andaremos trasteando con:
 * **Frontend:** HTML5, CSS3 / Bootstrap (para que al menos parezca medio apañado).
-* **Backend / Lógica:** JavaScript(Supongo).
+* **Backend / Lógica:** JavaScript.
 * **Base de Datos en la Nube:** Supabase.
 * **Control de versiones:** Git & GitHub.
 * **Diagrama para base de datos:** dbdiagram.io.
