@@ -1,20 +1,35 @@
 // Mi conexión al backend de Supabase
 const supabaseUrl = 'https://zmxmcojxfxkwxtakkwkq.supabase.co';
 const supabaseKey = 'sb_publishable_hekpGJ37q3DLhWvo5ZLyQg_wqfGXw_5';
+
+console.log("🟢 1. Archivo auth.js cargado correctamente en el navegador.");
+
+// Verificar si el HTML importó correctamente la librería de Supabase
+if (typeof window.supabase === 'undefined') {
+    alert("❌ CRÍTICO: La librería de Supabase no se cargó. Revisa que pusiste el <script> de Supabase en tu HTML antes de auth.js");
+    console.error("Fallo: window.supabase no existe.");
+} else {
+    console.log("🟢 2. Librería de Supabase detectada correctamente.");
+}
+
 const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
 // --- LÓGICA DE REGISTRO ---
 const registroForm = document.getElementById('registroForm');
 if (registroForm) {
+    console.log("🟢 3. Formulario de REGISTRO detectado en esta página.");
+    
     registroForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
+        e.preventDefault(); // Evita que la página parpadee y se recargue
+        console.log("🟢 4. Botón presionado. Recarga de página detenida con éxito.");
 
-        // 1. Capturar y limpiar los datos (quitar espacios en blanco)
         const nombre = document.getElementById('regNombre').value.trim();
         const email = document.getElementById('regEmail').value.trim();
         const password = document.getElementById('regPassword').value;
 
-        // 2. Validaciones front-end
+        console.log(`🟢 5. Datos listos para enviar -> Nombre: ${nombre}, Email: ${email}`);
+
+        // Validaciones locales
         if (!nombre || !email || !password) {
             alert('⚠️ Por favor, completa todos los campos obligatorios (*).');
             return;
@@ -25,22 +40,30 @@ if (registroForm) {
             return;
         }
 
-        // 3. Envío a la base de datos
-        const { data, error } = await supabase.auth.signUp({
-            email: email,
-            password: password,
-            options: {
-                data: { full_name: nombre }
-            }
-        });
+        console.log("🟢 6. Conectando con los servidores de Supabase...");
+        
+        try {
+            const { data, error } = await supabase.auth.signUp({
+                email: email,
+                password: password,
+                options: {
+                    data: { full_name: nombre }
+                }
+            });
 
-        // 4. Manejo de respuestas y redirección
-        if (error) {
-            alert('❌ Error al registrar: ' + error.message);
-        } else {
-            alert('✅ ¡Registro exitoso! Tu información se ha guardado correctamente.\n\nSerás redirigido para iniciar sesión.');
-            registroForm.reset();
-            window.location.href = 'login.html'; // Redirección automática al login
+            console.log("🟢 7. Respuesta recibida del servidor:", {data, error});
+
+            if (error) {
+                alert('❌ Error al registrar: ' + error.message);
+                console.error("Error de Supabase:", error);
+            } else {
+                alert('✅ ¡Registro exitoso! Tu información se ha guardado correctamente.\n\nSerás redirigido para iniciar sesión.');
+                registroForm.reset();
+                window.location.href = 'login.html'; 
+            }
+        } catch (err) {
+            alert('❌ Error de red o código: ' + err.message);
+            console.error("Fallo crítico en JS:", err);
         }
     });
 }
@@ -48,8 +71,11 @@ if (registroForm) {
 // --- LÓGICA DE LOGIN ---
 const loginForm = document.getElementById('loginForm');
 if (loginForm) {
+    console.log("🟢 3. Formulario de LOGIN detectado en esta página.");
+    
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+        console.log("🟢 4. Botón Login presionado. Deteniendo recarga.");
 
         const email = document.getElementById('loginEmail').value.trim();
         const password = document.getElementById('loginPassword').value;
@@ -59,16 +85,24 @@ if (loginForm) {
             return;
         }
 
-        const { data, error } = await supabase.auth.signInWithPassword({
-            email: email,
-            password: password
-        });
+        console.log("🟢 5. Validando credenciales en Supabase para: " + email);
 
-        if (error) {
-            alert('❌ Credenciales incorrectas. Verifica tu correo o contraseña.');
-        } else {
-            alert('✅ ¡Inicio de sesión exitoso! Bienvenido.');
-            window.location.href = 'index.html'; // Redirección al Home
+        try {
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email: email,
+                password: password
+            });
+
+            if (error) {
+                alert('❌ Credenciales incorrectas. Verifica tu correo o contraseña.');
+                console.error("Error de Login:", error);
+            } else {
+                alert('✅ ¡Inicio de sesión exitoso! Bienvenido.');
+                window.location.href = 'index.html'; 
+            }
+        } catch (err) {
+            alert('❌ Error de red o código: ' + err.message);
+            console.error("Fallo crítico en JS (Login):", err);
         }
     });
 }
