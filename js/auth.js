@@ -14,7 +14,7 @@ if (registroForm) {
         const email = document.getElementById('regEmail').value.trim();
         const password = document.getElementById('regPassword').value;
 
-        // 2. Validaciones front-end (Estilo HADA)
+        // 2. Validaciones front-end
         if (!nombre || !email || !password) {
             alert('⚠️ Por favor, completa todos los campos obligatorios (*).');
             return;
@@ -40,7 +40,7 @@ if (registroForm) {
         } else {
             alert('✅ ¡Registro exitoso! Tu información se ha guardado correctamente.\n\nSerás redirigido para iniciar sesión.');
             registroForm.reset();
-            window.location.href = 'login.html'; // Redirección automática
+            window.location.href = 'login.html'; // Redirección automática al login
         }
     });
 }
@@ -65,11 +65,10 @@ if (loginForm) {
         });
 
         if (error) {
-            // Mensaje amigable si se equivocan de clave
             alert('❌ Credenciales incorrectas. Verifica tu correo o contraseña.');
         } else {
             alert('✅ ¡Inicio de sesión exitoso! Bienvenido.');
-            window.location.href = 'index.html'; // Redirige al inicio
+            window.location.href = 'index.html'; // Redirección al Home
         }
     });
 }
