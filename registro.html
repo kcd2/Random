@@ -26,7 +26,7 @@
             overflow: hidden;
         }
 
-        /* --- FONDO ANIMADO CORREGIDO --- */
+        /* --- FONDO ANIMADO --- */
         .interactive-bg {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -36,20 +36,17 @@
         .orb {
             position: absolute;
             border-radius: 50%;
-            /* Desenfoque reducido para que la luz tenga más forma */
             filter: blur(80px);
             transition: transform 0.2s ease-out;
         }
         .orb-1 {
             width: 40vw; height: 40vw;
-            /* Luz blanca mucho más visible */
             background: rgba(255, 255, 255, 0.15);
             top: -5%; left: -5%;
             animation: float 20s infinite alternate ease-in-out;
         }
         .orb-2 {
             width: 35vw; height: 35vw;
-            /* Tono azul/cyan oscuro sutil para dar contraste */
             background: rgba(60, 130, 200, 0.2);
             bottom: -5%; right: -5%;
             animation: float 25s infinite alternate-reverse ease-in-out;
@@ -133,43 +130,27 @@
             transition: opacity 0.3s;
         }
         .btn-auth:hover { opacity: 0.8; }
-        /* --- ADAPTACIÓN PARA MÓVILES (RESPONSIVE) --- */
-        @media (max-width: 768px) {
-            .navbar-custom {
-                flex-direction: column; 
-                padding: 20px 5%;
-                gap: 15px;
-            }
-            .navbar-brand-txt {
-                font-size: 1.4rem; 
-                text-align: center;
-            }
-            .nav-links {
-                gap: 20px; 
-                width: 100%;
-                justify-content: center;
-                flex-wrap: wrap; 
-            }
-            .hero-title {
-                font-size: 3.5rem; 
-            }
-        }
+
         /* --- MEDIDOR DE CONTRASEÑA --- */
+        .password-group {
+            margin-bottom: 35px;
+            text-align: left;
+        }
+        .password-group .form-control-custom {
+            margin-bottom: 8px;
+        }
         .password-reqs {
             font-size: 0.75rem;
-            color: #666666;
-            margin-top: 5px;
-            margin-bottom: 12px;
-            text-align: left;
-            letter-spacing: 0.5px;
+            color: #777777;
+            margin-bottom: 10px;
             display: block;
+            letter-spacing: 0.5px;
         }
         .strength-bar-container {
             width: 100%;
             height: 3px;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.15);
             border-radius: 2px;
-            margin-bottom: 35px;
             overflow: hidden;
         }
         .strength-bar {
@@ -178,17 +159,34 @@
             background: #ffffff;
             transition: width 0.3s ease, background-color 0.3s ease;
         }
+
+        /* --- ADAPTACIÓN PARA MÓVILES --- */
+        @media (max-width: 768px) {
+            .navbar-custom {
+                flex-direction: column;
+                padding: 20px 5%;
+                gap: 15px;
+            }
+            .navbar-brand-txt {
+                font-size: 1.4rem;
+                text-align: center;
+            }
+            .nav-links {
+                gap: 20px;
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <!-- Las luces animadas -->
     <div class="interactive-bg">
         <div class="orb orb-1" id="orb1"></div>
         <div class="orb orb-2" id="orb2"></div>
     </div>
 
-    <!-- Contenedor del menú inyectado -->
     <div id="menu-container"></div>
 
     <div class="main-content">
@@ -198,10 +196,12 @@
                 <input type="text" id="regNombre" class="form-control-custom" placeholder="Nombre completo *" required>
                 <input type="email" id="regEmail" class="form-control-custom" placeholder="Correo electrónico *" required>
                 
-                <input type="password" id="regPassword" class="form-control-custom" placeholder="Contraseña *" required style="margin-bottom: 0;">
-                <span class="password-reqs">Mínimo 6 caracteres y 1 mayúscula</span>
-                <div class="strength-bar-container">
-                    <div class="strength-bar" id="strengthBar"></div>
+                <div class="password-group">
+                    <input type="password" id="regPassword" class="form-control-custom" placeholder="Contraseña *" required>
+                    <span class="password-reqs">Mínimo 6 caracteres y 1 mayúscula</span>
+                    <div class="strength-bar-container">
+                        <div class="strength-bar" id="strengthBar"></div>
+                    </div>
                 </div>
 
                 <button type="submit" class="btn-auth">CREAR CUENTA</button>
@@ -209,13 +209,13 @@
         </div>
     </div>
 
-    <!-- Inyección del menú y script interactivo -->
     <script>
         fetch('menu.html')
             .then(response => response.text())
             .then(data => {
                 document.getElementById('menu-container').innerHTML = data;
-                document.getElementById('link-registro').classList.add('active');
+                const linkRegistro = document.getElementById('link-registro');
+                if (linkRegistro) linkRegistro.classList.add('active');
             });
 
         document.addEventListener('mousemove', (e) => {
@@ -225,16 +225,8 @@
             document.getElementById('orb1').style.transform = `translate(${x * 80}px, ${y * 80}px)`;
             document.getElementById('orb2').style.transform = `translate(${x * -60}px, ${y * -60}px)`;
         });
-    </script>
-    
-    <!-- Cargar librería oficial de Supabase -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
-    <!-- Cargar tu archivo lógico de conexión -->
-    <script src="js/auth.js"></script>
 
-    <!-- Lógica visual del medidor de contraseña -->
-    <script>
+        // Lógica visual del medidor
         const regPassword = document.getElementById('regPassword');
         const strengthBar = document.getElementById('strengthBar');
 
@@ -242,21 +234,23 @@
             const val = regPassword.value;
             let strength = 0;
 
-            if (val.length >= 6) strength += 30; // Longitud
-            if (/[A-Z]/.test(val)) strength += 30; // Mayúscula
-            if (/[0-9!@#$%^&*]/.test(val)) strength += 40; // Números o símbolos extra
+            // Divide el 100% exacto en los dos requisitos
+            if (val.length >= 6) strength += 50;
+            if (/[A-Z]/.test(val)) strength += 50;
 
             strengthBar.style.width = strength + '%';
 
-            // Transición de blanco al azul de tu orbe oscuro
-            if (strength <= 30) {
-                strengthBar.style.background = '#ffffff'; 
-            } else if (strength <= 60) {
-                strengthBar.style.background = '#8ebdf0'; 
+            if (strength === 50) {
+                strengthBar.style.background = '#8ebdf0'; // Azul claro si cumple a medias
+            } else if (strength === 100) {
+                strengthBar.style.background = '#3c82c8'; // Azul intenso si cumple todo
             } else {
-                strengthBar.style.background = '#3c82c8'; // Azul seguro
+                strengthBar.style.background = '#ffffff'; // Blanco si no cumple nada
             }
         });
     </script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/auth.js"></script>
 </body>
 </html>
