@@ -133,6 +133,27 @@
             transition: opacity 0.3s;
         }
         .btn-auth:hover { opacity: 0.8; }
+        /* --- ADAPTACIÓN PARA MÓVILES (RESPONSIVE) --- */
+        @media (max-width: 768px) {
+            .navbar-custom {
+                flex-direction: column; 
+                padding: 20px 5%;
+                gap: 15px;
+            }
+            .navbar-brand-txt {
+                font-size: 1.4rem; 
+                text-align: center;
+            }
+            .nav-links {
+                gap: 20px; 
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap; 
+            }
+            .hero-title {
+                font-size: 3.5rem; 
+            }
+        }
     </style>
 </head>
 <body>
