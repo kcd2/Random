@@ -137,11 +137,13 @@
 </head>
 <body>
 
+    <!-- Las luces animadas -->
     <div class="interactive-bg">
         <div class="orb orb-1" id="orb1"></div>
         <div class="orb orb-2" id="orb2"></div>
     </div>
 
+    <!-- Contenedor del menú inyectado -->
     <div id="menu-container"></div>
 
     <div class="main-content">
@@ -156,6 +158,7 @@
         </div>
     </div>
 
+    <!-- Inyección del menú y script interactivo -->
     <script>
         fetch('menu.html')
             .then(response => response.text())
@@ -172,5 +175,11 @@
             document.getElementById('orb2').style.transform = `translate(${x * -60}px, ${y * -60}px)`;
         });
     </script>
+    
+    <!-- Cargar librería oficial de Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Cargar tu archivo lógico de conexión -->
+    <script src="js/auth.js"></script>
 </body>
 </html>
