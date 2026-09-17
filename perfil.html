@@ -26,7 +26,6 @@
             overflow-x: hidden;
         }
 
-        /* --- FONDO ANIMADO --- */
         .interactive-bg {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -56,7 +55,6 @@
             100% { margin-top: 50px; margin-left: 80px; }
         }
 
-        /* --- MENÚ --- */
         .navbar-custom {
             padding: 30px 5%;
             display: flex;
@@ -84,7 +82,6 @@
         }
         .nav-links a:hover, .nav-links a.active { color: var(--text-main); }
 
-        /* --- TARJETA DE PERFIL --- */
         .main-content {
             flex: 1; 
             display: flex; 
@@ -151,7 +148,6 @@
             letter-spacing: 1px;
         }
 
-        /* --- FORMULARIO EDICIÓN --- */
         .form-control-custom {
             width: 100%; 
             background: transparent; 
@@ -231,7 +227,6 @@
         </div>
     </div>
 
-    <!-- Scripts de Interfaz -->
     <script>
         fetch('menu.html')
             .then(response => response.text())
@@ -249,14 +244,11 @@
         });
     </script>
     
-    <!-- Scripts de Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/auth.js"></script>
 
-    <!-- Lógica Exclusiva del Perfil -->
     <script>
         document.addEventListener("DOMContentLoaded", async () => {
-            // Esperar un breve instante para que auth.js inicialice supabaseClient
             setTimeout(async () => {
                 const { data: { session } } = await supabaseClient.auth.getSession();
                 
@@ -267,38 +259,35 @@
                 }
 
                 const userId = session.user.id;
-
-                // 1. Cargar datos del usuario desde la tabla 'amigos'
+                const nombreSesion = session.user.user_metadata.full_name || "Usuario";
+                
                 const { data: perfilData, error } = await supabaseClient
                     .from('amigos')
                     .select('*')
                     .eq('auth_id', userId)
                     .single();
 
-                if (error) {
-                    console.error("Error cargando perfil:", error);
-                    return;
-                }
-
-                // 2. Pintar los datos en el HTML
-                document.getElementById('displayNombre').textContent = perfilData.nombre_real || "Sin Nombre";
-                document.getElementById('displayRol').textContent = perfilData.rol || "Usuario";
-                document.getElementById('displayApodo').textContent = perfilData.apodo_denigrante || "Sin Apodo";
-                document.getElementById('displayPuntos').textContent = perfilData.puntos_myspace || "0";
+                const nombreFinal = perfilData?.nombre_real || nombreSesion;
+                document.getElementById('displayNombre').textContent = nombreFinal;
+                document.getElementById('displayRol').textContent = perfilData?.rol || "Usuario";
+                document.getElementById('displayApodo').textContent = perfilData?.apodo_denigrante || "---";
+                document.getElementById('displayPuntos').textContent = perfilData?.puntos_myspace || "0";
                 
-                if (perfilData.foto_url) {
+                const fotoDefault = `https://ui-avatars.com/api/?name=${encodeURIComponent(nombreFinal)}&background=111111&color=ffffff&size=150`;
+                
+                if (perfilData && perfilData.foto_url) {
                     document.getElementById('displayFoto').src = perfilData.foto_url;
                     document.getElementById('inputFoto').value = perfilData.foto_url;
+                } else {
+                    document.getElementById('displayFoto').src = fotoDefault;
                 }
                 
-                if (perfilData.biografia_troll) {
+                if (perfilData && perfilData.biografia_troll) {
                     document.getElementById('inputBio').value = perfilData.biografia_troll;
                 }
 
-                // Mostrar el formulario ahora que los datos están listos
                 document.getElementById('perfilForm').style.display = "block";
 
-                // 3. Manejar el guardado del formulario
                 document.getElementById('perfilForm').addEventListener('submit', async (e) => {
                     e.preventDefault();
                     const nuevaFoto = document.getElementById('inputFoto').value.trim();
@@ -306,19 +295,28 @@
 
                     const { error: updateError } = await supabaseClient
                         .from('amigos')
-                        .update({ foto_url: nuevaFoto, biografia_troll: nuevaBio })
-                        .eq('auth_id', userId);
+                        .upsert({ 
+                            auth_id: userId, 
+                            nombre_real: nombreFinal,
+                            foto_url: nuevaFoto, 
+                            biografia_troll: nuevaBio,
+                            rol: perfilData?.rol || 'usuario'
+                        }, { onConflict: 'auth_id' });
 
                     if (updateError) {
                         alert("Error al actualizar el perfil.");
                         console.error(updateError);
                     } else {
                         alert("¡Perfil actualizado con éxito!");
-                        if (nuevaFoto) document.getElementById('displayFoto').src = nuevaFoto;
+                        if (nuevaFoto) {
+                            document.getElementById('displayFoto').src = nuevaFoto;
+                        } else {
+                            document.getElementById('displayFoto').src = fotoDefault;
+                        }
                     }
                 });
 
-            }, 500); // Pequeño delay para asegurar que supabaseClient existe
+            }, 500); 
         });
     </script>
 </body>
