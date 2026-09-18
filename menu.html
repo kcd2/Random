@@ -10,3 +10,35 @@
         <a href="login.html" id="link-login">Login</a>
     </div>
 </nav>
+
+<script>
+    setTimeout(async () => {
+        if (typeof supabaseClient !== 'undefined') {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session) {
+                const linkPerfil = document.getElementById('link-perfil');
+                const linkLogin = document.getElementById('link-login');
+                if (linkPerfil) linkPerfil.style.display = 'inline-block';
+                if (linkLogin) linkLogin.textContent = 'Cerrar Sesión';
+                linkLogin.href = '#';
+                linkLogin.onclick = async (e) => {
+                    e.preventDefault();
+                    await supabaseClient.auth.signOut();
+                    window.location.href = 'index.html';
+                };
+
+                // Comprobar si es admin/propietario para mostrar el botón Admin
+                const { data: userRole } = await supabaseClient
+                    .from('amigos')
+                    .select('rol')
+                    .eq('auth_id', session.user.id)
+                    .single();
+                
+                if (userRole && (userRole.rol === 'administrador' || userRole.rol === 'propietario')) {
+                    const linkAdmin = document.getElementById('link-admin');
+                    if (linkAdmin) linkAdmin.style.display = 'inline-block';
+                }
+            }
+        }
+    }, 300);
+</script>
