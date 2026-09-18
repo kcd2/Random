@@ -32,35 +32,94 @@
 </nav>
 
 <style>
-    .nav-dropdown-group { position: relative; display: inline-flex; align-items: center; }
-    .nav-dropdown-toggle {
-        color: var(--text-muted); text-decoration: none; font-size: 0.75rem; text-transform: uppercase;
-        letter-spacing: 2px; cursor: pointer; transition: color 0.3s; line-height: 1;
+    .navbar-custom {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 40px;
+        background: rgba(5, 5, 5, 0.8);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        width: 100%;
+        box-sizing: border-box;
     }
-    .nav-dropdown-toggle:hover { color: var(--text-main); }
+    .navbar-brand-txt {
+        font-family: 'Oswald', sans-serif;
+        font-size: 1.2rem;
+        color: #fff;
+        text-decoration: none;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+    }
+    .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 30px;
+    }
+    .nav-links a {
+        color: var(--text-muted, #777);
+        text-decoration: none;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        transition: color 0.3s;
+    }
+    .nav-links a:hover { color: #fff; }
+
+    .nav-dropdown-group { 
+        position: relative; 
+        display: inline-flex; 
+        align-items: center; 
+    }
+    .nav-dropdown-toggle {
+        color: var(--text-muted, #777);
+        text-decoration: none;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        cursor: pointer;
+        transition: color 0.3s;
+        line-height: 1;
+    }
+    .nav-dropdown-toggle:hover { color: #fff; }
+    
     .nav-dropdown-content {
-        display: none; position: absolute; left: 0; top: 30px; background: rgba(15, 15, 15, 0.95);
-        border: 1px solid rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); min-width: 180px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 1000; border-radius: 6px; overflow: hidden;
+        display: none;
+        position: absolute;
+        left: 0;
+        top: 30px;
+        background: rgba(15, 15, 15, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        min-width: 180px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        z-index: 1000;
+        border-radius: 6px;
+        overflow: hidden;
     }
     .nav-dropdown-content a {
-        color: var(--text-main); padding: 10px 15px; text-decoration: none; display: block;
-        font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;
+        color: #fff;
+        padding: 10px 15px;
+        text-decoration: none;
+        display: block;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
     }
     .nav-dropdown-content a:hover { background: rgba(255, 255, 255, 0.1); }
     .show-gestion { display: block; }
 
     .auth-menu-container { position: relative; display: flex; align-items: center; }
-    .nav-auth-btn { color: var(--text-muted); text-decoration: none; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; transition: color 0.3s; }
-    .nav-auth-btn:hover { color: var(--text-main); }
+    .nav-auth-btn { color: var(--text-muted, #777); text-decoration: none; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; transition: color 0.3s; }
+    .nav-auth-btn:hover { color: #fff; }
     
     .dropdown-toggle-custom {
         display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 5px 10px;
-        background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); border-radius: 20px; transition: background 0.3s;
+        background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; transition: background 0.3s;
     }
     .dropdown-toggle-custom:hover { background: rgba(255, 255, 255, 0.1); }
     .nav-avatar { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; }
-    #navUserName { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-main); }
+    #navUserName { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #fff; }
 
     .dropdown-content-custom {
         display: none; position: absolute; right: 0; top: 45px; background: rgba(15, 15, 15, 0.95);
@@ -68,7 +127,7 @@
         box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 1000; border-radius: 6px; overflow: hidden;
     }
     .dropdown-content-custom a {
-        color: var(--text-main); padding: 12px 16px; text-decoration: none; display: block;
+        color: #fff; padding: 12px 16px; text-decoration: none; display: block;
         font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; transition: background 0.2s;
     }
     .dropdown-content-custom a:hover { background: rgba(255, 255, 255, 0.1); }
