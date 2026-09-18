@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Días Felices - Encuestas</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-dark: #050505;
+            --text-main: #ffffff;
+            --text-muted: #777777;
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+        .interactive-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            transition: transform 0.2s ease-out;
+        }
+        .orb-1 { width: 40vw; height: 40vw; background: rgba(255, 255, 255, 0.15); top: -5%; left: -5%; animation: float 20s infinite alternate ease-in-out; }
+        .orb-2 { width: 35vw; height: 35vw; background: rgba(60, 130, 200, 0.2); bottom: -5%; right: -5%; animation: float 25s infinite alternate-reverse ease-in-out; }
+        @keyframes float { 0% { margin-top: 0; margin-left: 0; } 100% { margin-top: 50px; margin-left: 80px; } }
+
+        .main-content { padding: 40px 20px; max-width: 700px; margin: 0 auto; width: 100%; flex: 1; }
+        .poll-card {
+            background: rgba(20, 20, 20, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        .poll-title { font-family: 'Oswald', sans-serif; font-size: 1.5rem; letter-spacing: 1px; margin-bottom: 20px; }
+        .btn-option {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: #fff;
+            width: 100%;
+            padding: 12px 20px;
+            text-align: left;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+            border-radius: 4px;
+        }
+        .btn-option:hover { background: rgba(255, 255, 255, 0.15); border-color: #fff; }
+    </style>
+</head>
+<body>
+    <div class="interactive-bg">
+        <div class="orb orb-1" id="orb1"></div>
+        <div class="orb orb-2" id="orb2"></div>
+    </div>
+
+    <div id="menu-container"></div>
+
+    <div class="main-content">
+        <h2 class="mb-4 text-center" style="font-family: 'Oswald', sans-serif; letter-spacing: 2px;">ENCUESTAS SEMANALES</h2>
+        <div id="pollsContainer">
+            <div class="poll-card text-center">
+                <h3 class="poll-title">¿Quién es el que peor maneja los videojuegos?</h3>
+                <button class="btn-option" onclick="votar(1)">Opción A: El manco oficial</button>
+                <button class="btn-option" onclick="votar(2)">Opción B: El que se cae solo</button>
+                <button class="btn-option" onclick="votar(3)">Opción C: Yo mismo (honestidad)</button>
+            </div>
+            <div class="poll-card text-center">
+                <h3 class="poll-title">¿Cuál es el peor apodo denigrante de la temporada?</h3>
+                <button class="btn-option" onclick="votar(4)">Opción A: El Becario</button>
+                <button class="btn-option" onclick="votar(5)">Opción B: El Lentejas</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        fetch('menu.html').then(r => r.text()).then(d => {
+            document.getElementById('menu-container').innerHTML = d;
+            const linkEncuestas = document.getElementById('link-encuestas');
+            if(linkEncuestas) linkEncuestas.classList.add('active');
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth) - 0.5;
+            const y = (e.clientY / window.innerHeight) - 0.5;
+            document.getElementById('orb1').style.transform = `translate(${x * 80}px, ${y * 80}px)`;
+            document.getElementById('orb2').style.transform = `translate(${x * -60}px, ${y * -60}px)`;
+        });
+
+        async function votar(opcionId) {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (!session) {
+                alert("Debes iniciar sesión para votar.");
+                window.location.href = 'login.html';
+                return;
+            }
+            alert("¡Voto registrado con éxito!");
+        }
+    </script>
+</body>
+</html>
