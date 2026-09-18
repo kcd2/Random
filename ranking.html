@@ -100,6 +100,13 @@
 
         document.addEventListener("DOMContentLoaded", () => {
             setTimeout(async () => {
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                if (!session) {
+                    alert("Debes iniciar sesión para ver el ranking de amigos.");
+                    window.location.href = 'login.html';
+                    return;
+                }
+
                 const { data: amigos, error } = await supabaseClient
                     .from('amigos')
                     .select('*')

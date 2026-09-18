@@ -106,6 +106,17 @@
             document.getElementById('orb2').style.transform = `translate(${x * -60}px, ${y * -60}px)`;
         });
 
+        // Protección de acceso a encuestas
+        document.addEventListener("DOMContentLoaded", () => {
+            setTimeout(async () => {
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                if (!session) {
+                    alert("Debes iniciar sesión para acceder a las encuestas.");
+                    window.location.href = 'login.html';
+                }
+            }, 300);
+        });
+
         async function votar(opcionId) {
             const { data: { session } } = await supabaseClient.auth.getSession();
             if (!session) {
