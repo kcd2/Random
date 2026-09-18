@@ -8,6 +8,7 @@
         <a href="perfil.html" id="link-perfil" style="display: none;">Mi Perfil</a>
         <a href="admin.html" id="link-admin" style="display: none;">Admin</a>
         <a href="login.html" id="link-login">Login</a>
+        <a href="registro.html" id="link-registro">Registro</a>
     </div>
 </nav>
 
@@ -15,19 +16,25 @@
     setTimeout(async () => {
         if (typeof supabaseClient !== 'undefined') {
             const { data: { session } } = await supabaseClient.auth.getSession();
-            if (session) {
-                const linkPerfil = document.getElementById('link-perfil');
-                const linkLogin = document.getElementById('link-login');
-                if (linkPerfil) linkPerfil.style.display = 'inline-block';
-                if (linkLogin) linkLogin.textContent = 'Cerrar Sesión';
-                linkLogin.href = '#';
-                linkLogin.onclick = async (e) => {
-                    e.preventDefault();
-                    await supabaseClient.auth.signOut();
-                    window.location.href = 'index.html';
-                };
+            
+            const linkPerfil = document.getElementById('link-perfil');
+            const linkLogin = document.getElementById('link-login');
+            const linkRegistro = document.getElementById('link-registro');
 
-                // Comprobar si es admin/propietario para mostrar el botón Admin
+            if (session) {
+                if (linkPerfil) linkPerfil.style.display = 'inline-block';
+                if (linkRegistro) linkRegistro.style.display = 'none'; 
+                
+                if (linkLogin) {
+                    linkLogin.textContent = 'Cerrar Sesión';
+                    linkLogin.href = '#';
+                    linkLogin.onclick = async (e) => {
+                        e.preventDefault();
+                        await supabaseClient.auth.signOut();
+                        window.location.href = 'index.html';
+                    };
+                }
+
                 const { data: userRole } = await supabaseClient
                     .from('amigos')
                     .select('rol')
@@ -38,6 +45,9 @@
                     const linkAdmin = document.getElementById('link-admin');
                     if (linkAdmin) linkAdmin.style.display = 'inline-block';
                 }
+            } else {
+                if (linkLogin) linkLogin.style.display = 'inline-block';
+                if (linkRegistro) linkRegistro.style.display = 'inline-block';
             }
         }
     }, 300);
