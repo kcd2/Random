@@ -117,50 +117,77 @@ if (loginForm) {
     });
 }
 
-// --- LÓGICA DE MENÚ DINÁMICO Y SESIÓN ---
-async function actualizarMenu() {
-    const linkLogin = document.getElementById('link-login');
-    if (!linkLogin) {
-        setTimeout(actualizarMenu, 50); 
-        return;
-    }
+// --- LÓGICA DE MENÚ DINÁMICO Y DESPLEGABLE DE USUARIO ---
+document.addEventListener("DOMContentLoaded", () => {
+    setTimeout(async () => {
+        if (typeof supabaseClient !== 'undefined') {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            
+            const guestLinks = document.getElementById('guest-links');
+            const userDropdown = document.getElementById('user-dropdown');
 
-    const linkRegistro = document.getElementById('link-registro');
-    const linkPerfil = document.getElementById('link-perfil');
-    const linkAdmin = document.getElementById('link-admin');
-    const linkLogout = document.getElementById('link-logout');
+            if (session && guestLinks && userDropdown) {
+                console.log("Sesión activa detectada para:", session.user.email);
+                
+                guestLinks.style.display = 'none';
+                userDropdown.style.display = 'block';
 
-    const { data: { session } } = await supabaseClient.auth.getSession();
+                const userId = session.user.id;
+                const emailUser = session.user.email.split('@')[0];
 
-    if (session) {
-        console.log("Sesión activa detectada para:", session.user.email);
-        
-        linkLogin.style.display = 'none';
-        linkRegistro.style.display = 'none';
-        linkPerfil.style.display = 'inline-block';
-        linkLogout.style.display = 'inline-block';
+                const { data: perfil } = await supabaseClient
+                    .from('amigos')
+                    .select('nombre_real, foto_url, rol')
+                    .eq('auth_id', userId)
+                    .single();
 
-        const { data: perfil, error } = await supabaseClient
-            .from('amigos')
-            .select('rol')
-            .eq('auth_id', session.user.id)
-            .single();
+                const nombre = perfil?.nombre_real || emailUser;
+                const foto = perfil?.foto_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(nombre)}&background=111111&color=ffffff&size=100`;
 
-        if (perfil && (perfil.rol === 'propietario' || perfil.rol === 'administrador')) {
-            linkAdmin.style.display = 'inline-block';
-            console.log("Acceso concedido al Panel Admin.");
+                const nameEl = document.getElementById('navUserName');
+                const avatarEl = document.getElementById('navUserAvatar');
+                if (nameEl) nameEl.textContent = nombre;
+                if (avatarEl) avatarEl.src = foto;
+
+                // Comprobar rol de administrador / propietario
+                if (perfil && (perfil.rol === 'administrador' || perfil.rol === 'propietario')) {
+                    const adminLink = document.getElementById('link-admin-dropdown');
+                    if (adminLink) adminLink.style.display = 'block';
+                    console.log("Acceso concedido al Panel Admin en el menú.");
+                }
+            } else if (guestLinks && userDropdown) {
+                console.log("No hay sesión activa. Mostrando botones de invitado.");
+                guestLinks.style.display = 'flex';
+                userDropdown.style.display = 'none';
+            }
         }
+    }, 400);
+});
 
-        linkLogout.addEventListener('click', async (e) => {
-            e.preventDefault();
-            await supabaseClient.auth.signOut();
-            alert('Has cerrado sesión correctamente.');
-            window.location.href = 'login.html';
-        });
+// Funciones globales para el menú desplegable de la esquina
+function toggleMenu(e) {
+    e.stopPropagation();
+    const menu = document.getElementById("dropdownMenu");
+    if (menu) menu.classList.toggle("show");
+}
 
-    } else {
-        console.log("No hay sesión activa. Mostrando menú público.");
+window.onclick = function(event) {
+    if (!event.target.closest('#user-dropdown')) {
+        var dropdowns = document.getElementsByClassName("dropdown-content-custom");
+        for (var i = 0; i < dropdowns.length; i++) {
+            var openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains('show')) {
+                openDropdown.classList.remove('show');
+            }
+        }
     }
 }
 
-actualizarMenu();
+async function cerrarSesion(e) {
+    e.preventDefault();
+    if (typeof supabaseClient !== 'undefined') {
+        await supabaseClient.auth.signOut();
+        alert('Has cerrado sesión correctamente.');
+        window.location.href = 'index.html';
+    }
+}

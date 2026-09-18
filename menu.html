@@ -5,50 +5,80 @@
         <a href="blog.html" id="link-blog">Blog</a>
         <a href="ranking.html" id="link-ranking">Ranking</a>
         <a href="encuestas.html" id="link-encuestas">Encuestas</a>
-        <a href="perfil.html" id="link-perfil" style="display: none;">Mi Perfil</a>
-        <a href="admin.html" id="link-admin" style="display: none;">Admin</a>
-        <a href="login.html" id="link-login">Login</a>
-        <a href="registro.html" id="link-registro">Registro</a>
+    </div>
+
+    <div class="auth-menu-container">
+        <div id="guest-links" style="display: flex; gap: 20px; align-items: center;">
+            <a href="login.html" class="nav-auth-btn">Login</a>
+            <a href="registro.html" class="nav-auth-btn">Registro</a>
+        </div>
+
+        <div id="user-dropdown" class="dropdown" style="display: none;">
+            <div class="dropdown-toggle-custom" onclick="toggleMenu(event)">
+                <img id="navUserAvatar" src="" alt="Avatar" class="nav-avatar">
+                <span id="navUserName">Cuenta</span>
+                <span style="font-size: 0.6rem;">▼</span>
+            </div>
+            <div id="dropdownMenu" class="dropdown-content-custom">
+                <a href="perfil.html">Mi Perfil</a>
+                <a href="admin.html" id="link-admin-dropdown" style="display: none;">Panel Admin</a>
+                <a href="#" onclick="cerrarSesion(event)" style="color: #ff6b6b;">Cerrar Sesión</a>
+            </div>
+        </div>
     </div>
 </nav>
 
-<script>
-    setTimeout(async () => {
-        if (typeof supabaseClient !== 'undefined') {
-            const { data: { session } } = await supabaseClient.auth.getSession();
-            
-            const linkPerfil = document.getElementById('link-perfil');
-            const linkLogin = document.getElementById('link-login');
-            const linkRegistro = document.getElementById('link-registro');
+<style>
+    .auth-menu-container { position: relative; display: flex; align-items: center; }
+    .nav-auth-btn {
+        color: var(--text-muted);
+        text-decoration: none;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        transition: color 0.3s;
+    }
+    .nav-auth-btn:hover { color: var(--text-main); }
+    
+    .dropdown-toggle-custom {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        padding: 5px 10px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--border-color);
+        border-radius: 20px;
+        transition: background 0.3s;
+    }
+    .dropdown-toggle-custom:hover { background: rgba(255, 255, 255, 0.1); }
+    .nav-avatar { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; }
+    #navUserName { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-main); }
 
-            if (session) {
-                if (linkPerfil) linkPerfil.style.display = 'inline-block';
-                if (linkRegistro) linkRegistro.style.display = 'none'; 
-                
-                if (linkLogin) {
-                    linkLogin.textContent = 'Cerrar Sesión';
-                    linkLogin.href = '#';
-                    linkLogin.onclick = async (e) => {
-                        e.preventDefault();
-                        await supabaseClient.auth.signOut();
-                        window.location.href = 'index.html';
-                    };
-                }
-
-                const { data: userRole } = await supabaseClient
-                    .from('amigos')
-                    .select('rol')
-                    .eq('auth_id', session.user.id)
-                    .single();
-                
-                if (userRole && (userRole.rol === 'administrador' || userRole.rol === 'propietario')) {
-                    const linkAdmin = document.getElementById('link-admin');
-                    if (linkAdmin) linkAdmin.style.display = 'inline-block';
-                }
-            } else {
-                if (linkLogin) linkLogin.style.display = 'inline-block';
-                if (linkRegistro) linkRegistro.style.display = 'inline-block';
-            }
-        }
-    }, 300);
-</script>
+    .dropdown-content-custom {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 45px;
+        background: rgba(15, 15, 15, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        min-width: 160px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        z-index: 1000;
+        border-radius: 6px;
+        overflow: hidden;
+    }
+    .dropdown-content-custom a {
+        color: var(--text-main);
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: background 0.2s;
+    }
+    .dropdown-content-custom a:hover { background: rgba(255, 255, 255, 0.1); }
+    .show { display: block; }
+</style>
