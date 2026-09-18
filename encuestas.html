@@ -106,13 +106,14 @@
             document.getElementById('orb2').style.transform = `translate(${x * -60}px, ${y * -60}px)`;
         });
 
-        // Protección de acceso a encuestas
+        // Protección contra acceso directo por URL
         document.addEventListener("DOMContentLoaded", () => {
             setTimeout(async () => {
                 const { data: { session } } = await supabaseClient.auth.getSession();
                 if (!session) {
-                    alert("Debes iniciar sesión para acceder a las encuestas.");
+                    alert("Acceso denegado. Debes iniciar sesión.");
                     window.location.href = 'login.html';
+                    return;
                 }
             }, 300);
         });

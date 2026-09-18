@@ -3,10 +3,8 @@
     <div class="nav-links">
         <a href="index.html" id="link-home">Home</a>
         <a href="blog.html" id="link-blog">Blog</a>
-        <a href="ranking.html" id="link-ranking">Ranking</a>
-        <a href="encuestas.html" id="link-encuestas">Encuestas</a>
-
-        <!-- Menú Desplegable GESTION (Solo visible para Admins) -->
+        <a href="ranking.html" id="link-ranking" style="display: none;">Ranking</a>
+        <a href="encuestas.html" id="link-encuestas" style="display: none;">Encuestas</a>
         <div id="gestion-dropdown" class="nav-dropdown-group" style="display: none;">
             <span class="nav-dropdown-toggle" onclick="toggleGestionMenu(event)">GESTION ▼</span>
             <div id="gestionDropdownContent" class="nav-dropdown-content">
@@ -14,14 +12,11 @@
             </div>
         </div>
     </div>
-
-    <!-- Contenedor del Usuario / Botones de Acceso (Esquina Superior Derecha) -->
     <div class="auth-menu-container">
         <div id="guest-links" style="display: flex; gap: 20px; align-items: center;">
             <a href="login.html" class="nav-auth-btn">Login</a>
             <a href="registro.html" class="nav-auth-btn">Registro</a>
         </div>
-
         <div id="user-dropdown" class="dropdown" style="display: none;">
             <div class="dropdown-toggle-custom" onclick="toggleUserMenu(event)">
                 <img id="navUserAvatar" src="" alt="Avatar" class="nav-avatar">
@@ -37,47 +32,24 @@
 </nav>
 
 <style>
-    /* Estilos del desplegable de GESTION en la barra */
-    .nav-dropdown-group { position: relative; display: inline-block; }
+    .nav-dropdown-group { position: relative; display: inline-flex; align-items: center; }
     .nav-dropdown-toggle {
-        color: var(--text-muted);
-        text-decoration: none;
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        cursor: pointer;
-        padding: 5px 0;
-        transition: color 0.3s;
+        color: var(--text-muted); text-decoration: none; font-size: 0.75rem; text-transform: uppercase;
+        letter-spacing: 2px; cursor: pointer; transition: color 0.3s; line-height: 1;
     }
     .nav-dropdown-toggle:hover { color: var(--text-main); }
-    
     .nav-dropdown-content {
-        display: none;
-        position: absolute;
-        left: 0;
-        top: 30px;
-        background: rgba(15, 15, 15, 0.95);
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        backdrop-filter: blur(10px);
-        min-width: 180px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-        z-index: 1000;
-        border-radius: 6px;
-        overflow: hidden;
+        display: none; position: absolute; left: 0; top: 30px; background: rgba(15, 15, 15, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); min-width: 180px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 1000; border-radius: 6px; overflow: hidden;
     }
     .nav-dropdown-content a {
-        color: var(--text-main);
-        padding: 10px 15px;
-        text-decoration: none;
-        display: block;
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        letter-spacing: 1px;
+        color: var(--text-main); padding: 10px 15px; text-decoration: none; display: block;
+        font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;
     }
     .nav-dropdown-content a:hover { background: rgba(255, 255, 255, 0.1); }
     .show-gestion { display: block; }
 
-    /* Estilos del usuario y botones (manteniendo los previos) */
     .auth-menu-container { position: relative; display: flex; align-items: center; }
     .nav-auth-btn { color: var(--text-muted); text-decoration: none; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; transition: color 0.3s; }
     .nav-auth-btn:hover { color: var(--text-main); }
@@ -107,14 +79,12 @@
     function toggleGestionMenu(e) {
         e.stopPropagation();
         document.getElementById("gestionDropdownContent").classList.toggle("show-gestion");
-        // Cerrar el otro menú si está abierto
         document.getElementById("dropdownMenu").classList.remove("show");
     }
 
     function toggleUserMenu(e) {
         e.stopPropagation();
         document.getElementById("dropdownMenu").classList.toggle("show");
-        // Cerrar el otro menú si está abierto
         document.getElementById("gestionDropdownContent").classList.remove("show-gestion");
     }
 

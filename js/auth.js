@@ -1,8 +1,10 @@
+// Mi conexión al backend de Supabase
 const supabaseUrl = 'https://zmxmcojxfxkwxtakkwkq.supabase.co';
 const supabaseKey = 'sb_publishable_hekpGJ37q3DLhWvo5ZLyQg_wqfGXw_5';
 
 console.log("Archivo auth.js cargado correctamente.");
 
+// Verificar si el HTML importó correctamente la librería de Supabase
 if (typeof window.supabase === 'undefined') {
     alert("CRÍTICO: La librería de Supabase no se cargó. Revisa que pusiste el <script> de Supabase en tu HTML antes de auth.js");
     console.error("Fallo: window.supabase no existe.");
@@ -18,14 +20,12 @@ if (registroForm) {
     console.log("Formulario de registro detectado en esta página.");
     
     registroForm.addEventListener('submit', async (e) => {
-        e.preventDefault(); 
+        e.preventDefault();
         console.log("Formulario de registro enviado.");
 
         const nombre = document.getElementById('regNombre').value.trim();
         const email = document.getElementById('regEmail').value.trim();
         const password = document.getElementById('regPassword').value;
-
-        console.log(`Datos listos para enviar. Nombre: ${nombre}, Email: ${email}`);
 
         if (!nombre || !email || !password) {
             alert('Por favor, completa todos los campos obligatorios (*).');
@@ -42,8 +42,6 @@ if (registroForm) {
             return;
         }
 
-        console.log("Conectando con los servidores de Supabase...");
-        
         try {
             const { data, error } = await supabaseClient.auth.signUp({
                 email: email,
@@ -53,16 +51,12 @@ if (registroForm) {
                 }
             });
 
-            console.log("Respuesta recibida del servidor:", {data, error});
-
             if (error) {
                 alert('Error al registrar: ' + error.message);
                 console.error("Error de Supabase:", error);
             } else if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
-                console.warn("El email ya está registrado (identities vacío). No se creó un usuario nuevo.");
                 alert('Ese correo ya está registrado. Si es tuyo, intenta iniciar sesión o revisa tu bandeja de confirmación.');
             } else {
-                console.log("Usuario nuevo creado correctamente:", data.user);
                 alert('Registro exitoso. Revisa tu correo para confirmar la cuenta antes de iniciar sesión.\n\nSerás redirigido para iniciar sesión.');
                 registroForm.reset();
                 window.location.href = 'login.html'; 
@@ -81,7 +75,6 @@ if (loginForm) {
     
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        console.log("Formulario de login enviado.");
 
         const email = document.getElementById('loginEmail').value.trim();
         const password = document.getElementById('loginPassword').value;
@@ -90,8 +83,6 @@ if (loginForm) {
             alert('Ingresa tu correo y contraseña.');
             return;
         }
-
-        console.log("Validando credenciales en Supabase para: " + email);
 
         try {
             const { data, error } = await supabaseClient.auth.signInWithPassword({
@@ -113,7 +104,7 @@ if (loginForm) {
     });
 }
 
-// --- LÓGICA DE MENÚ DINÁMICO, DESPLEGABLE DE USUARIO Y ROL ADMIN ---
+// --- LÓGICA DE MENÚ DINÁMICO, DESPLEGABLE DE USUARIO Y RESTRINGIR SECCIONES ---
 document.addEventListener("DOMContentLoaded", () => {
     setTimeout(async () => {
         if (typeof supabaseClient !== 'undefined') {
@@ -122,12 +113,16 @@ document.addEventListener("DOMContentLoaded", () => {
             const guestLinks = document.getElementById('guest-links');
             const userDropdown = document.getElementById('user-dropdown');
             const gestionDropdown = document.getElementById('gestion-dropdown');
+            const linkRanking = document.getElementById('link-ranking');
+            const linkEncuestas = document.getElementById('link-encuestas');
 
             if (session) {
-                console.log("Sesión activa detectada para:", session.user.email);
-                
                 if (guestLinks) guestLinks.style.display = 'none';
                 if (userDropdown) userDropdown.style.display = 'block';
+
+                // Mostrar Ranking y Encuestas solo cuando hay sesión activa
+                if (linkRanking) linkRanking.style.display = 'inline-block';
+                if (linkEncuestas) linkEncuestas.style.display = 'inline-block';
 
                 const userId = session.user.id;
                 const emailUser = session.user.email.split('@')[0];
@@ -146,20 +141,22 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (nameEl) nameEl.textContent = nombre;
                 if (avatarEl) avatarEl.src = foto;
 
+                // Comprobar rol de administrador o propietario para mostrar GESTION
                 if (perfil && (perfil.rol === 'administrador' || perfil.rol === 'propietario')) {
                     if (gestionDropdown) gestionDropdown.style.display = 'inline-block';
-                    console.log("Acceso de Administrador concedido: Menú GESTION visible.");
                 }
             } else {
-                console.log("No hay sesión activa. Mostrando botones de invitado.");
                 if (guestLinks) guestLinks.style.display = 'flex';
                 if (userDropdown) userDropdown.style.display = 'none';
                 if (gestionDropdown) gestionDropdown.style.display = 'none';
+                if (linkRanking) linkRanking.style.display = 'none';
+                if (linkEncuestas) linkEncuestas.style.display = 'none';
             }
         }
     }, 400);
 });
 
+// Funciones globales para el control de menús desplegables
 function toggleGestionMenu(e) {
     e.stopPropagation();
     const gestionMenu = document.getElementById("gestionDropdownContent");
