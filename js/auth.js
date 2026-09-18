@@ -1,10 +1,8 @@
-// Mi conexión al backend de Supabase
 const supabaseUrl = 'https://zmxmcojxfxkwxtakkwkq.supabase.co';
 const supabaseKey = 'sb_publishable_hekpGJ37q3DLhWvo5ZLyQg_wqfGXw_5';
 
 console.log("Archivo auth.js cargado correctamente.");
 
-// Verificar si el HTML importó correctamente la librería de Supabase
 if (typeof window.supabase === 'undefined') {
     alert("CRÍTICO: La librería de Supabase no se cargó. Revisa que pusiste el <script> de Supabase en tu HTML antes de auth.js");
     console.error("Fallo: window.supabase no existe.");
@@ -20,7 +18,7 @@ if (registroForm) {
     console.log("Formulario de registro detectado en esta página.");
     
     registroForm.addEventListener('submit', async (e) => {
-        e.preventDefault(); // Evita que la página parpadee y se recargue
+        e.preventDefault(); 
         console.log("Formulario de registro enviado.");
 
         const nombre = document.getElementById('regNombre').value.trim();
@@ -29,7 +27,6 @@ if (registroForm) {
 
         console.log(`Datos listos para enviar. Nombre: ${nombre}, Email: ${email}`);
 
-        // Validaciones locales
         if (!nombre || !email || !password) {
             alert('Por favor, completa todos los campos obligatorios (*).');
             return;
@@ -40,7 +37,6 @@ if (registroForm) {
             return;
         }
 
-        // Validar que contenga al menos una mayúscula
         if (!/[A-Z]/.test(password)) {
             alert('La contraseña debe contener al menos una letra mayúscula.');
             return;
@@ -117,7 +113,7 @@ if (loginForm) {
     });
 }
 
-// --- LÓGICA DE MENÚ DINÁMICO Y DESPLEGABLE DE USUARIO ---
+// --- LÓGICA DE MENÚ DINÁMICO, DESPLEGABLE DE USUARIO Y ROL ADMIN ---
 document.addEventListener("DOMContentLoaded", () => {
     setTimeout(async () => {
         if (typeof supabaseClient !== 'undefined') {
@@ -125,12 +121,13 @@ document.addEventListener("DOMContentLoaded", () => {
             
             const guestLinks = document.getElementById('guest-links');
             const userDropdown = document.getElementById('user-dropdown');
+            const gestionDropdown = document.getElementById('gestion-dropdown');
 
-            if (session && guestLinks && userDropdown) {
+            if (session) {
                 console.log("Sesión activa detectada para:", session.user.email);
                 
-                guestLinks.style.display = 'none';
-                userDropdown.style.display = 'block';
+                if (guestLinks) guestLinks.style.display = 'none';
+                if (userDropdown) userDropdown.style.display = 'block';
 
                 const userId = session.user.id;
                 const emailUser = session.user.email.split('@')[0];
@@ -149,37 +146,42 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (nameEl) nameEl.textContent = nombre;
                 if (avatarEl) avatarEl.src = foto;
 
-                // Comprobar rol de administrador / propietario
                 if (perfil && (perfil.rol === 'administrador' || perfil.rol === 'propietario')) {
-                    const adminLink = document.getElementById('link-admin-dropdown');
-                    if (adminLink) adminLink.style.display = 'block';
-                    console.log("Acceso concedido al Panel Admin en el menú.");
+                    if (gestionDropdown) gestionDropdown.style.display = 'inline-block';
+                    console.log("Acceso de Administrador concedido: Menú GESTION visible.");
                 }
-            } else if (guestLinks && userDropdown) {
+            } else {
                 console.log("No hay sesión activa. Mostrando botones de invitado.");
-                guestLinks.style.display = 'flex';
-                userDropdown.style.display = 'none';
+                if (guestLinks) guestLinks.style.display = 'flex';
+                if (userDropdown) userDropdown.style.display = 'none';
+                if (gestionDropdown) gestionDropdown.style.display = 'none';
             }
         }
     }, 400);
 });
 
-// Funciones globales para el menú desplegable de la esquina
-function toggleMenu(e) {
+function toggleGestionMenu(e) {
     e.stopPropagation();
-    const menu = document.getElementById("dropdownMenu");
-    if (menu) menu.classList.toggle("show");
+    const gestionMenu = document.getElementById("gestionDropdownContent");
+    const userMenu = document.getElementById("dropdownMenu");
+    if (gestionMenu) gestionMenu.classList.toggle("show-gestion");
+    if (userMenu) userMenu.classList.remove("show");
+}
+
+function toggleUserMenu(e) {
+    e.stopPropagation();
+    const userMenu = document.getElementById("dropdownMenu");
+    const gestionMenu = document.getElementById("gestionDropdownContent");
+    if (userMenu) userMenu.classList.toggle("show");
+    if (gestionMenu) gestionMenu.classList.remove("show-gestion");
 }
 
 window.onclick = function(event) {
-    if (!event.target.closest('#user-dropdown')) {
-        var dropdowns = document.getElementsByClassName("dropdown-content-custom");
-        for (var i = 0; i < dropdowns.length; i++) {
-            var openDropdown = dropdowns[i];
-            if (openDropdown.classList.contains('show')) {
-                openDropdown.classList.remove('show');
-            }
-        }
+    if (!event.target.closest('#gestion-dropdown') && !event.target.closest('#user-dropdown')) {
+        const gestionMenu = document.getElementById("gestionDropdownContent");
+        const userMenu = document.getElementById("dropdownMenu");
+        if (gestionMenu) gestionMenu.classList.remove("show-gestion");
+        if (userMenu) userMenu.classList.remove("show");
     }
 }
 

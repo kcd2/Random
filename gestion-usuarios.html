@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Días Felices - Gestión de Usuarios</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-dark: #050505;
+            --text-main: #ffffff;
+            --text-muted: #777777;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --primary-blue: #3c82c8;
+        }
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+        .interactive-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            transition: transform 0.2s ease-out;
+        }
+        .orb-1 { width: 40vw; height: 40vw; background: rgba(255, 255, 255, 0.15); top: -5%; left: -5%; animation: float 20s infinite alternate ease-in-out; }
+        .orb-2 { width: 35vw; height: 35vw; background: rgba(60, 130, 200, 0.2); bottom: -5%; right: -5%; animation: float 25s infinite alternate-reverse ease-in-out; }
+        @keyframes float { 0% { margin-top: 0; margin-left: 0; } 100% { margin-top: 50px; margin-left: 80px; } }
+
+        .main-content { padding: 40px 5%; flex: 1; }
+        .admin-panel {
+            background: rgba(20, 20, 20, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            padding: 30px;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+        .table-custom { color: #fff; width: 100%; min-width: 800px; }
+        .table-custom th { border-bottom: 2px solid var(--border-color); padding: 15px 10px; font-family: 'Oswald', sans-serif; letter-spacing: 1px; }
+        .table-custom td { border-bottom: 1px solid var(--border-color); padding: 15px 10px; vertical-align: middle; }
+        .input-admin { background: transparent; border: 1px solid rgba(255,255,255,20%); color: #fff; padding: 5px 10px; width: 100%; border-radius: 4px; }
+        .input-admin:focus { outline: none; border-color: var(--primary-blue); }
+        
+        .btn-blue-custom {
+            background-color: var(--primary-blue);
+            color: #fff;
+            border: none;
+            padding: 6px 18px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            border-radius: 4px;
+            transition: opacity 0.2s;
+        }
+        .btn-blue-custom:hover { opacity: 0.85; }
+    </style>
+</head>
+<body>
+    <div class="interactive-bg">
+        <div class="orb orb-1" id="orb1"></div>
+        <div class="orb orb-2" id="orb2"></div>
+    </div>
+
+    <div id="menu-container"></div>
+
+    <div class="main-content">
+        <h2 class="mb-4 text-center" style="font-family: 'Oswald', sans-serif; letter-spacing: 2px;">GESTIÓN DE USUARIOS</h2>
+        <div class="admin-panel">
+            <table class="table-custom">
+                <thead>
+                    <tr>
+                        <th>Foto</th>
+                        <th>Nombre</th>
+                        <th>Apodo Denigrante</th>
+                        <th>Puntos MySpace</th>
+                        <th>Rol</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaGestionUsuarios">
+                    <tr><td colspan="6" class="text-center text-muted">Verificando credenciales de administrador...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        fetch('menu.html').then(r => r.text()).then(d => {
+            document.getElementById('menu-container').innerHTML = d;
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth) - 0.5;
+            const y = (e.clientY / window.innerHeight) - 0.5;
+            document.getElementById('orb1').style.transform = `translate(${x * 80}px, ${y * 80}px)`;
+            document.getElementById('orb2').style.transform = `translate(${x * -60}px, ${y * -60}px)`;
+        });
+
+        document.addEventListener("DOMContentLoaded", () => {
+            setTimeout(async () => {
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                if (!session) {
+                    alert("Debes iniciar sesión.");
+                    return window.location.href = 'login.html';
+                }
+
+                const { data: currentUser } = await supabaseClient
+                    .from('amigos')
+                    .select('rol')
+                    .eq('auth_id', session.user.id)
+                    .single();
+
+                if (!currentUser || (currentUser.rol !== 'propietario' && currentUser.rol !== 'administrador')) {
+                    alert("Acceso denegado. Esta sección es exclusiva para administradores.");
+                    return window.location.href = 'index.html';
+                }
+
+                cargarUsuariosGestion();
+            }, 500);
+        });
+
+        async function cargarUsuariosGestion() {
+            const { data: usuarios, error } = await supabaseClient
+                .from('amigos')
+                .select('*')
+                .order('puntos_myspace', { ascending: false });
+
+            const tbody = document.getElementById('tablaGestionUsuarios');
+            if (error) return tbody.innerHTML = `<tr><td colspan="6" class="text-danger text-center">Error: ${error.message}</td></tr>`;
+            if (!usuarios.length) return tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">No hay usuarios registrados.</td></tr>`;
+
+            tbody.innerHTML = '';
+
+            usuarios.forEach(user => {
+                const foto = user.foto_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.nombre_real || 'User')}&background=111111&color=ffffff`;
+                
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><img src="${foto}" width="40" height="40" style="border-radius: 50%; object-fit: cover; border: 1px solid rgba(255,255,255,0.2);"></td>
+                    <td>${user.nombre_real || 'Sin nombre'}</td>
+                    <td><input type="text" class="input-admin" id="apodo_${user.id}" value="${user.apodo_denigrante || ''}"></td>
+                    <td><input type="number" class="input-admin" id="puntos_${user.id}" value="${user.puntos_myspace || 0}" style="width: 80px;"></td>
+                    <td>
+                        <select class="input-admin" id="rol_${user.id}">
+                            <option value="usuario" ${user.rol === 'usuario' ? 'selected' : ''}>Usuario</option>
+                            <option value="administrador" ${user.rol === 'administrador' ? 'selected' : ''}>Administrador</option>
+                            <option value="propietario" ${user.rol === 'propietario' ? 'selected' : ''}>Propietario</option>
+                        </select>
+                    </td>
+                    <td><button class="btn-blue-custom" onclick="guardarCambiosUsuario(${user.id})">Guardar</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function guardarCambiosUsuario(id) {
+            const apodo = document.getElementById(`apodo_${id}`).value;
+            const puntos = document.getElementById(`puntos_${id}`).value;
+            const rol = document.getElementById(`rol_${id}`).value;
+
+            const { error } = await supabaseClient.from('amigos').update({
+                apodo_denigrante: apodo,
+                puntos_myspace: parseInt(puntos) || 0,
+                rol: rol
+            }).eq('id', id);
+
+            if (error) {
+                alert("Error al actualizar: " + error.message);
+            } else {
+                alert("¡Usuario actualizado correctamente!");
+            }
+        }
+    </script>
+</body>
+</html>

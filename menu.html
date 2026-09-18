@@ -5,8 +5,17 @@
         <a href="blog.html" id="link-blog">Blog</a>
         <a href="ranking.html" id="link-ranking">Ranking</a>
         <a href="encuestas.html" id="link-encuestas">Encuestas</a>
+
+        <!-- Menú Desplegable GESTION (Solo visible para Admins) -->
+        <div id="gestion-dropdown" class="nav-dropdown-group" style="display: none;">
+            <span class="nav-dropdown-toggle" onclick="toggleGestionMenu(event)">GESTION ▼</span>
+            <div id="gestionDropdownContent" class="nav-dropdown-content">
+                <a href="gestion-usuarios.html">Gestión de Usuarios</a>
+            </div>
+        </div>
     </div>
 
+    <!-- Contenedor del Usuario / Botones de Acceso (Esquina Superior Derecha) -->
     <div class="auth-menu-container">
         <div id="guest-links" style="display: flex; gap: 20px; align-items: center;">
             <a href="login.html" class="nav-auth-btn">Login</a>
@@ -14,14 +23,13 @@
         </div>
 
         <div id="user-dropdown" class="dropdown" style="display: none;">
-            <div class="dropdown-toggle-custom" onclick="toggleMenu(event)">
+            <div class="dropdown-toggle-custom" onclick="toggleUserMenu(event)">
                 <img id="navUserAvatar" src="" alt="Avatar" class="nav-avatar">
                 <span id="navUserName">Cuenta</span>
                 <span style="font-size: 0.6rem;">▼</span>
             </div>
             <div id="dropdownMenu" class="dropdown-content-custom">
                 <a href="perfil.html">Mi Perfil</a>
-                <a href="admin.html" id="link-admin-dropdown" style="display: none;">Panel Admin</a>
                 <a href="#" onclick="cerrarSesion(event)" style="color: #ff6b6b;">Cerrar Sesión</a>
             </div>
         </div>
@@ -29,56 +37,93 @@
 </nav>
 
 <style>
-    .auth-menu-container { position: relative; display: flex; align-items: center; }
-    .nav-auth-btn {
+    /* Estilos del desplegable de GESTION en la barra */
+    .nav-dropdown-group { position: relative; display: inline-block; }
+    .nav-dropdown-toggle {
         color: var(--text-muted);
         text-decoration: none;
         font-size: 0.75rem;
         text-transform: uppercase;
         letter-spacing: 2px;
+        cursor: pointer;
+        padding: 5px 0;
         transition: color 0.3s;
     }
+    .nav-dropdown-toggle:hover { color: var(--text-main); }
+    
+    .nav-dropdown-content {
+        display: none;
+        position: absolute;
+        left: 0;
+        top: 30px;
+        background: rgba(15, 15, 15, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        min-width: 180px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        z-index: 1000;
+        border-radius: 6px;
+        overflow: hidden;
+    }
+    .nav-dropdown-content a {
+        color: var(--text-main);
+        padding: 10px 15px;
+        text-decoration: none;
+        display: block;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    .nav-dropdown-content a:hover { background: rgba(255, 255, 255, 0.1); }
+    .show-gestion { display: block; }
+
+    /* Estilos del usuario y botones (manteniendo los previos) */
+    .auth-menu-container { position: relative; display: flex; align-items: center; }
+    .nav-auth-btn { color: var(--text-muted); text-decoration: none; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; transition: color 0.3s; }
     .nav-auth-btn:hover { color: var(--text-main); }
     
     .dropdown-toggle-custom {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        cursor: pointer;
-        padding: 5px 10px;
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid var(--border-color);
-        border-radius: 20px;
-        transition: background 0.3s;
+        display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 5px 10px;
+        background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); border-radius: 20px; transition: background 0.3s;
     }
     .dropdown-toggle-custom:hover { background: rgba(255, 255, 255, 0.1); }
     .nav-avatar { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; }
     #navUserName { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-main); }
 
     .dropdown-content-custom {
-        display: none;
-        position: absolute;
-        right: 0;
-        top: 45px;
-        background: rgba(15, 15, 15, 0.95);
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        backdrop-filter: blur(10px);
-        min-width: 160px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-        z-index: 1000;
-        border-radius: 6px;
-        overflow: hidden;
+        display: none; position: absolute; right: 0; top: 45px; background: rgba(15, 15, 15, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); min-width: 160px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 1000; border-radius: 6px; overflow: hidden;
     }
     .dropdown-content-custom a {
-        color: var(--text-main);
-        padding: 12px 16px;
-        text-decoration: none;
-        display: block;
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        transition: background 0.2s;
+        color: var(--text-main); padding: 12px 16px; text-decoration: none; display: block;
+        font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; transition: background 0.2s;
     }
     .dropdown-content-custom a:hover { background: rgba(255, 255, 255, 0.1); }
     .show { display: block; }
 </style>
+
+<script>
+    function toggleGestionMenu(e) {
+        e.stopPropagation();
+        document.getElementById("gestionDropdownContent").classList.toggle("show-gestion");
+        // Cerrar el otro menú si está abierto
+        document.getElementById("dropdownMenu").classList.remove("show");
+    }
+
+    function toggleUserMenu(e) {
+        e.stopPropagation();
+        document.getElementById("dropdownMenu").classList.toggle("show");
+        // Cerrar el otro menú si está abierto
+        document.getElementById("gestionDropdownContent").classList.remove("show-gestion");
+    }
+
+    window.onclick = function(event) {
+        if (!event.target.closest('#gestion-dropdown') && !event.target.closest('#user-dropdown')) {
+            const gestionMenu = document.getElementById("gestionDropdownContent");
+            const userMenu = document.getElementById("dropdownMenu");
+            if (gestionMenu) gestionMenu.classList.remove("show-gestion");
+            if (userMenu) userMenu.classList.remove("show");
+        }
+    }
+</script>
